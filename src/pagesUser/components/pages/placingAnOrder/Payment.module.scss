@@ -1,0 +1,337 @@
+.Payment {
+	margin-top: 100px;
+	margin-bottom: 200px;
+	.content {
+		h2 {
+			margin-bottom: 20px;
+		}
+		.cards_payments {
+			display: flex;
+			gap: 30px;
+			@media (max-width: 771px) {
+				display: flex;
+				flex-direction: column;
+			}
+			.card_payment_onLine {
+				display: flex;
+				justify-content: center;
+				gap: 10px;
+				width: 280px;
+				height: 123px;
+				border-radius: 6px;
+				background: white;
+				padding: 26px 12px 30px 12px;
+				.text_payment {
+					display: flex;
+					flex-direction: column;
+					gap: 10px;
+					.images_payment {
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						gap: 10px;
+						img {
+							width: 40px;
+						}
+					}
+				}
+			}
+			.card_upon_receipt {
+				display: flex;
+				justify-content: center;
+				gap: 10px;
+				width: 280px;
+				height: 123px;
+				border-radius: 6px;
+				background: white;
+				padding: 26px 12px 30px 12px;
+				.text_receipt {
+					display: flex;
+					flex-direction: column;
+					gap: 6px;
+					p {
+						font-size: 13px;
+					}
+					.images_receipt {
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						gap: 10px;
+						img {
+							width: 40px;
+						}
+					}
+				}
+			}
+			.card_cash {
+				display: flex;
+				justify-content: center;
+				gap: 15px;
+				width: 280px;
+				height: 123px;
+				border-radius: 6px;
+				background: white;
+				padding: 26px 12px 30px 12px;
+				.text_cash {
+					display: flex;
+					flex-direction: column;
+					gap: 3px;
+					h4 {
+						width: 140px;
+					}
+					p {
+						font-size: 13px;
+					}
+				}
+			}
+		}
+		.card_number {
+			margin-top: 60px;
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+			width: 446px;
+			height: 268px;
+			border-radius: 6px;
+			background: white;
+			padding: 26px 17px 30px 17px;
+			@media (max-width: 511px) {
+				width: 270px;
+				padding: 20px 13px 26px 13px;
+			}
+			.images_card_number {
+				display: flex;
+				justify-content: flex-end;
+				align-items: center;
+				gap: 10px;
+				img {
+					width: 40px;
+				}
+			}
+			.inputs_number {
+				display: flex;
+				flex-direction: column;
+				gap: 24px;
+				.number_card_input {
+					display: flex;
+					flex-direction: column;
+					position: relative;
+					.input {
+						font-size: 16px;
+						padding: 10px 10px 10px 5px;
+						display: block;
+						width: 400px;
+						border: none;
+						border-bottom: 1px solid #515151;
+						background: transparent;
+						color: black;
+						&:focus {
+							outline: none;
+						}
+
+						&:focus ~ label,
+						&:valid ~ label {
+							top: -20px;
+							font-size: 14px;
+							color: rgb(145, 150, 158);
+						}
+						@media (max-width: 511px) {
+							width: 245px;
+						}
+					}
+
+					label {
+						color: #999;
+						font-size: 15px;
+						font-weight: normal;
+						position: absolute;
+						pointer-events: none;
+						left: 5px;
+						top: 10px;
+						transition: 0.2s ease all;
+						-moz-transition: 0.2s ease all;
+						-webkit-transition: 0.2s ease all;
+					}
+				}
+				.year_card_input {
+					display: flex;
+					flex-direction: column;
+					gap: 24px;
+					.inputs_cvc_mm_yy {
+						display: flex;
+						align-items: center;
+						gap: 50px;
+						.inputs_mm_yy {
+							display: flex;
+							align-items: center;
+							gap: 15px;
+							.input_month {
+								display: flex;
+								position: relative;
+								.input_mm {
+									font-size: 16px;
+									padding: 10px 10px 10px 5px;
+									display: block;
+									width: 42px;
+									border: none;
+									border-bottom: 1px solid #515151;
+									background: transparent;
+									color: black;
+									&:focus {
+										outline: none;
+									}
+
+									&:focus ~ label,
+									&:valid ~ label {
+										top: -20px;
+										font-size: 14px;
+										color: rgb(145, 150, 158);
+									}
+								}
+								.label_mm {
+									color: #999;
+									font-size: 15px;
+									font-weight: normal;
+									position: absolute;
+									pointer-events: none;
+									left: 5px;
+									top: 10px;
+									transition: 0.2s ease all;
+									-moz-transition: 0.2s ease all;
+									-webkit-transition: 0.2s ease all;
+								}
+							}
+							.input_year {
+								position: relative;
+								.input_yy {
+									font-size: 16px;
+									padding: 10px 10px 10px 5px;
+									display: block;
+									width: 42px;
+									border: none;
+									border-bottom: 1px solid #515151;
+									background: transparent;
+									color: black;
+									&:focus {
+										outline: none;
+									}
+
+									&:focus ~ label,
+									&:valid ~ label {
+										top: -20px;
+										font-size: 14px;
+										color: rgb(145, 150, 158);
+									}
+								}
+								.label_yy {
+									color: #999;
+									font-size: 15px;
+									font-weight: normal;
+									position: absolute;
+									pointer-events: none;
+									left: 5px;
+									top: 10px;
+									transition: 0.2s ease all;
+									-moz-transition: 0.2s ease all;
+									-webkit-transition: 0.2s ease all;
+								}
+							}
+						}
+						.input_cvc {
+							position: relative;
+							.input_cvc {
+								font-size: 16px;
+								padding: 10px 10px 10px 5px;
+								display: block;
+								width: 50px;
+								border: none;
+								border-bottom: 1px solid #515151;
+								background: transparent;
+								color: black;
+								&:focus {
+									outline: none;
+									// background: red;
+								}
+
+								&:focus ~ label,
+								&:valid ~ label {
+									top: -20px;
+									font-size: 14px;
+									color: rgb(145, 150, 158);
+								}
+							}
+							.label_cvc {
+								color: #999;
+								font-size: 15px;
+								font-weight: normal;
+								position: absolute;
+								pointer-events: none;
+								left: 5px;
+								top: 10px;
+								transition: 0.2s ease all;
+								-moz-transition: 0.2s ease all;
+								-webkit-transition: 0.2s ease all;
+							}
+						}
+					}
+					.first_name_input {
+						position: relative;
+						.input_name {
+							font-size: 16px;
+							padding: 10px 10px 10px 5px;
+							display: block;
+							width: 400px;
+							border: none;
+							border-bottom: 1px solid #515151;
+							background: transparent;
+							color: black;
+							&:focus {
+								outline: none;
+							}
+
+							&:focus ~ label,
+							&:valid ~ label {
+								top: -20px;
+								font-size: 14px;
+								color: rgb(145, 150, 158);
+							}
+							@media (max-width: 511px) {
+								width: 245px;
+							}
+						}
+
+						label {
+							color: #999;
+							font-size: 14px;
+							font-weight: normal;
+							position: absolute;
+							pointer-events: none;
+							left: 5px;
+							top: 10px;
+							transition: 0.2s ease all;
+							-moz-transition: 0.2s ease all;
+							-webkit-transition: 0.2s ease all;
+						}
+					}
+				}	
+			}
+		}
+		button {
+			margin-top: 10px;
+			cursor: pointer;
+			width: 280px;
+			height: 45px;
+			background: rgb(203, 17, 171);
+			border-radius: 6px;
+			border: none;
+			color: rgb(255, 255, 255);
+			font-size: 16px;
+			font-weight: 600;
+			text-align: center;
+			text-transform: capitalize;
+			@media (max-width: 511px) {
+				width: 270px;
+			}
+		}
+	}
+}

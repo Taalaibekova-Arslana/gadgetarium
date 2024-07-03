@@ -1,0 +1,566 @@
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import scss from './CardProductPage.module.scss';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import InfoPageForProduct from '../InfoPageForProduct';
+import React, { useCallback, useState } from 'react';
+import {
+	IconArrowLeft,
+	IconArrowRight,
+	IconFileLike,
+	IconHeart
+} from '@tabler/icons-react';
+import {
+	Button,
+	ConfigProvider,
+	InputNumber,
+	Modal,
+	Rate,
+	Tooltip
+} from 'antd';
+import ColorButton from '@/src/ui/colours/Colour';
+import AddBasketButton from '@/src/ui/customButtons/AddBasketButton';
+import { useBasketPutProductMutation } from '@/src/redux/api/basket';
+import { useFavoritePutProductMutation } from '@/src/redux/api/favorite';
+import { IconRedHeart } from '@/src/assets/icons';
+import { useGetCardProductQuery } from '@/src/redux/api/cardProductPage';
+import { useGetProductsColorsApiQuery } from '@/src/redux/api/productColorApi';
+import { useGetProductMemoryQuery } from '@/src/redux/api/memoryForProductApi';
+import { ViewedProducts } from '@/src/ui/ViewedProducts/ViewedProducts';
+import CustomModal from '@/src/ui/modalAdmin/CustomModal';
+import ModalLogin from '@/src/ui/customModalLogin/ModalLogin';
+import { useGetCharacteristicsProductQuery } from '@/src/redux/api/characteristicsAPI';
+const CardProductPage = () => {
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const [basketAddProduct] = useBasketPutProductMutation();
+	const [countIsProduct, ,] = useState<string>('1');
+	const [favoriteAddProduct] = useFavoritePutProductMutation();
+	const { productId } = useParams();
+	const { data: characteristicsApi } = useGetCharacteristicsProductQuery(
+		productId!
+	);
+	const [countInput, setCountInput] = useState<string>('1');
+	const { data: productColor } = useGetProductsColorsApiQuery(productId!);
+	const { data, refetch, isLoading } = useGetCardProductQuery({
+		id: Number(productId && productId),
+		color: searchParams.get('color') ? searchParams.toString() : '',
+		memory: searchParams.get('memory')
+			? `memory=${searchParams.get('memory')}`
+			: '',
+		quantity: searchParams.get('quantity')
+			? `quantity=${searchParams.get('quantity')}`
+			: ''
+	});
+
+	const [isSlider, setIsSlider] = useState<number>(1);
+	const [sliderResult, setSliderresult] = useState<number>(0);
+	const [contentIsModal, setContentIsModal] = useState<string>('');
+	const [modal2Open, setModal2Open] = useState(false);
+	const [openModal, setOpenModal] = useState(false);
+	const navigate = useNavigate();
+
+	const handleIndexSlider = useCallback((index: number) => {
+		setIsSlider(index + 1);
+		setSliderresult(index);
+	}, []);
+
+	const handleColorProductFunk = (color: string) => {
+		searchParams.set('color', color);
+		searchParams.delete('memory');
+		setSearchParams(searchParams);
+		// navigate(`/api/gadget/by-id/${productId}?${searchParams.toString()}`);
+	};
+
+	const handleMemoryProductFunk = (memory: string) => {
+		searchParams.set('memory', memory);
+		setSearchParams(searchParams);
+		// navigate(`/api/gadget/by-id/${productId}?${searchParams.toString()}`);
+	};
+	// console.log(window.location.search.substring(1));
+
+	const addBasketProduct = async (subGadgetId: number) => {
+		if (localStorage.getItem('isAuth') === 'true') {
+			await basketAddProduct({
+				id: subGadgetId,
+				quantity: searchParams.get('quantity')
+					? `quantity=${searchParams.get('quantity')}`
+					: ''
+			});
+		} else setOpenModal(true);
+		refetch();
+	};
+	const addFavoriteProduct = async (subGadgetId: number) => {
+		if (localStorage.getItem('isAuth') === 'true') {
+			await favoriteAddProduct(subGadgetId);
+			refetch();
+		} else setOpenModal(true);
+		// refetch();
+	};
+
+	const { data: productMemoryData } = useGetProductMemoryQuery({
+		gadgetId: Number(productId),
+		color: `color=${data?.mainColour}`
+	});
+	console.log(data, 'pdf url');
+
+	const handleCountProduct = () => {
+		setCountInput((prevValue) => {
+			const newValue = (parseInt(prevValue) || 0) + 1;
+			searchParams.set('quantity', newValue.toString());
+			setSearchParams(searchParams);
+			return newValue.toString();
+		});
+	};
+
+	const handleEnterCountProduct = () => {
+		searchParams.set('quantity', countInput);
+		setSearchParams(searchParams);
+	};
+
+	const handleMinuesProductQuantity = () => {
+		setCountInput((prevValue) => {
+			const newValue = Math.max((parseInt(prevValue) || 0) - 1, 1);
+			searchParams.set('quantity', newValue.toString());
+			setSearchParams(searchParams);
+			return newValue.toString();
+		});
+	};
+
+	console.log(countInput, 'count text');
+	const changeCountInputFunk = (event: string | number | null) => {
+		if (event !== null) {
+			const newValue = event.toString();
+			setCountInput(newValue);
+			searchParams.set('quantity', newValue);
+			setSearchParams(searchParams);
+		}
+	};
+
+	console.log(data?.likes, 'linkes');
+
+	return (
+		<>
+			<section className={scss.CardProductPage}>
+				<div className="container">
+					{isLoading ? (
+						<h1>IsLoading...</h1>
+					) : (
+						<div className={scss.content}>
+							<div className={scss.content_main_text_page}>
+								<div className={scss.div_content_product_and_pages}>
+									<p onClick={() => navigate('/')}>Главная »</p>
+									<p onClick={() => navigate('/catalog/1/filtred')}>
+										Смартфоны »
+									</p>
+									<p>
+										{data?.nameOfGadget.length! > 28 ? (
+											<>
+												{data?.nameOfGadget.slice(0, 22)}
+												<span style={{ cursor: 'pointer' }}>...</span>
+											</>
+										) : (
+											data?.nameOfGadget
+										)}
+									</p>
+								</div>
+								<div className={scss.div_brad_product}>
+									<img src={data?.brandLogo} alt="brand" />
+									<div></div>
+								</div>
+							</div>
+
+							<div className={scss.display_keen_slider}>
+								<div className={scss.slider_div_contents}>
+									<div className={scss.slider_div}>
+										{data?.images
+											.slice(sliderResult, isSlider)
+											.map((item, index) => (
+												<img
+													onClick={() => {
+														setContentIsModal(item);
+														setModal2Open(!modal2Open);
+													}}
+													src={item}
+													key={index}
+													alt={data.nameOfGadget}
+												/>
+											))}
+									</div>
+									<div className={scss.photosProduct}>
+										<IconArrowLeft
+											style={
+												sliderResult === 0
+													? { color: 'black' }
+													: { color: 'rgb(203, 17, 171)', cursor: 'pointer' }
+											}
+											onClick={() => {
+												if (isSlider === 1 && sliderResult === 0) {
+													null;
+												} else {
+													setIsSlider((prevValue) => prevValue - 1);
+													setSliderresult((prevValue) => prevValue - 1);
+												}
+											}}
+										/>
+										{data?.images.slice(0, 6).map((item, index) => (
+											<>
+												<div
+													className={
+														index === sliderResult
+															? `${scss.slider_photos_div} ${scss.activeBorder}`
+															: `${scss.slider_photos_div}`
+													}
+													key={index}
+												>
+													<img
+														onClick={() => handleIndexSlider(index)}
+														src={item}
+														alt={data.nameOfGadget}
+													/>
+												</div>
+											</>
+										))}
+										<IconArrowRight
+											style={
+												sliderResult === 5
+													? { color: 'black' }
+													: { color: 'rgb(203, 17, 171)', cursor: 'pointer' }
+											}
+											onClick={() => {
+												if (isSlider === 6 && sliderResult === 5) {
+													null;
+												} else {
+													setIsSlider((prevValue) => prevValue + 1);
+													setSliderresult((prevValue) => prevValue + 1);
+												}
+											}}
+										/>
+									</div>
+								</div>
+								<div className={scss.product_info}>
+									<h3>
+										{data?.nameOfGadget.length! > 28 ? (
+											<>
+												{data?.nameOfGadget.slice(0, 22)}
+												<Tooltip title={data?.nameOfGadget} color="#c11bab">
+													<span style={{ cursor: 'pointer' }}>...</span>
+												</Tooltip>
+											</>
+										) : (
+											data?.nameOfGadget
+										)}
+									</h3>
+									<div className={scss.product_content}>
+										<div className={scss.border_and_contents}>
+											<div className={scss.product_rating_and_numbers}>
+												<p className={scss.text_buy_product}>
+													Количество ({data?.quantity})
+												</p>
+												<p>
+													Артикул: <span>{data?.articleNumber}</span>
+												</p>
+												<div>
+													<Rate disabled defaultValue={data?.rating} />
+													<p>({data?.rating.toLocaleString()})</p>
+												</div>
+											</div>
+											<div></div>
+										</div>
+										<div className={scss.colors_and_price_info_div_product}>
+											<div className={scss.title_texts_and_price}>
+												<h3>Цвет товара:</h3>
+												<h3>Количество:</h3>
+												<div className={scss.prices_div}>
+													{data?.percent !== 0 && (
+														<div
+															className={
+																data?.percent !== 0
+																	? `${scss.noo_active_percent} ${scss.active_percent_div}`
+																	: `${scss.noo_active_percent}`
+															}
+														>
+															{data?.percent} %
+														</div>
+													)}
+													{data?.newProduct && data.percent === 0 && (
+														<div
+															className={
+																data.newProduct && data.percent === 0
+																	? `${scss.new_product} ${scss.active_new_product}`
+																	: `${scss.new_product}`
+															}
+														>
+															New
+														</div>
+													)}
+													{data?.recommend && data.percent === 0 && (
+														<div
+															className={
+																data.recommend && data.percent === 0
+																	? `${scss.noo_active_percent} ${scss.active_recommend}`
+																	: `${scss.noo_active_percent}`
+															}
+														>
+															<IconFileLike />
+														</div>
+													)}
+													<h2>{data?.price} c</h2>
+													{data?.percent !== 0 && (
+														<h3 className={scss.previous_price}>
+															{data?.currentPrice} c
+														</h3>
+													)}
+												</div>
+											</div>
+											<div className={scss.product_colors_and_content}>
+												<div className={scss.product_colors}>
+													{productColor?.map((el, index) => (
+														<div key={index}>
+															<ColorButton
+																onClick={() => {
+																	handleColorProductFunk(el);
+																}}
+																width="26px"
+																height="26px"
+																backgroundColor={el}
+															/>
+														</div>
+													))}
+												</div>
+												<div className={scss.div_buttons_counts}>
+													<button onClick={handleMinuesProductQuantity}>
+														-
+													</button>
+
+													<InputNumber
+														className={scss.input_for_quantity}
+														min={1}
+														max={data?.quantity}
+														defaultValue={Number(
+															searchParams.get('quantity')
+																? searchParams.get('quantity')
+																: countIsProduct
+														)}
+														type="text"
+														onChange={changeCountInputFunk}
+														value={Number(
+															searchParams.get('quantity')
+																? searchParams.get('quantity')
+																: countInput
+														)}
+														onKeyPress={(
+															e: React.KeyboardEvent<HTMLInputElement>
+														) => {
+															if (e.key === 'Enter') {
+																handleEnterCountProduct();
+															}
+														}}
+													/>
+													<button onClick={handleCountProduct}>+</button>
+												</div>
+												<div className={scss.border_div}></div>
+											</div>
+											<div className={scss.product_info_container}>
+												<div
+													className={scss.product_info_main_text_and_buttons}
+												>
+													<h3>Коротко о товаре:</h3>
+													<div className={scss.div_buttons_favorite_and_basket}>
+														<button
+															className={
+																data?.likes === true
+																	? `${scss.nooActiveButton} ${scss.activeButton}`
+																	: `${scss.nooActiveButton}`
+															}
+															onClick={() =>
+																data && addFavoriteProduct(data.subGadgetId)
+															}
+														>
+															{data?.likes === true ? (
+																<IconRedHeart />
+															) : (
+																<IconHeart color="rgb(144, 156, 181)" />
+															)}
+														</button>
+														{data?.basket ? (
+															<Button
+																className={scss.active_basket_button_navigate}
+																onClick={() => navigate('/basket')}
+															>
+																Перейти в корзину
+															</Button>
+														) : (
+															<AddBasketButton
+																onClick={() =>
+																	data && addBasketProduct(data.subGadgetId)
+																}
+																className={scss.add_bas_button}
+															>
+																В корзину
+															</AddBasketButton>
+														)}
+													</div>
+												</div>
+												<div className={scss.buttons_for_memory}>
+													{productMemoryData &&
+														productMemoryData?.map((el, index) => (
+															<Button
+																onClick={() => {
+																	handleMemoryProductFunk(el);
+																}}
+																className={scss.active_memory_button}
+																key={index}
+															>
+																{el}
+															</Button>
+														))}
+												</div>
+												<div className={scss.info_product}>
+													{characteristicsApi?.mainCharacteristics.Экран &&
+														characteristicsApi.mainCharacteristics.Экран
+															.Размер && (
+															<div className={scss.div_screen}>
+																<p>
+																	Экран............................................
+																</p>
+																<h4>
+																	{
+																		characteristicsApi?.mainCharacteristics
+																			.Экран.Размер
+																	}
+																</h4>
+															</div>
+														)}
+													<div className={scss.div_screen}>
+														<p>
+															Цвет..............................................
+														</p>
+														<h4>{data?.mainColour}</h4>
+													</div>
+													<div className={scss.div_screen}>
+														<p>Дата выпуска..............................</p>
+														<h4>{data?.releaseDate}</h4>
+													</div>
+
+													<div className={scss.div_screen}>
+														<p>
+															Память.........................................
+														</p>
+														<h4>{data?.memory}</h4>
+													</div>
+													<div className={scss.div_screen}>
+														<p>SIM-карты...................................</p>
+														<h4>{data?.countSim}</h4>
+													</div>
+													<div className={scss.div_screen}>
+														<p>Гарантия (месяцев)...................</p>
+														<h4>{data?.warranty}</h4>
+													</div>
+													{characteristicsApi?.mainCharacteristics
+														.Производительность &&
+														characteristicsApi.mainCharacteristics
+															.Производительность.Чипсет && (
+															<div className={scss.div_screen}>
+																<p>Производительность.................</p>
+																<h4>
+																	{
+																		characteristicsApi.mainCharacteristics
+																			.Производительность.Чипсет
+																	}
+																</h4>
+															</div>
+														)}
+
+													{characteristicsApi?.mainCharacteristics[
+														'Дизайн и корпус'
+													] &&
+														characteristicsApi.mainCharacteristics[
+															'Дизайн и корпус'
+														].Вес && (
+															<div className={scss.div_screen}>
+																<p>Производительность.................</p>
+																<h4>
+																	{
+																		characteristicsApi.mainCharacteristics[
+																			'Дизайн и корпус'
+																		].Вес
+																	}
+																</h4>
+															</div>
+														)}
+													{characteristicsApi?.mainCharacteristics.Батарея &&
+														characteristicsApi.mainCharacteristics.Батарея[
+															'Беспроводная зарядка'
+														] && (
+															<div className={scss.div_screen}>
+																<p>
+																	Батарея........................................
+																</p>
+																<h4>
+																	{
+																		characteristicsApi.mainCharacteristics
+																			.Батарея['Беспроводная зарядка']
+																	}
+																</h4>
+															</div>
+														)}
+
+													<div className={scss.div_screen}>
+														<p>
+															Процент.......................................
+														</p>
+														<h4>{data?.percent}</h4>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div>
+								<CustomModal
+									isModalOpen={openModal}
+									setIsModalOpen={setOpenModal}
+								>
+									<ModalLogin setOpenModal={setOpenModal} />
+								</CustomModal>
+							</div>
+						</div>
+					)}
+				</div>
+				<InfoPageForProduct />
+				<ViewedProducts />
+			</section>
+			<ConfigProvider
+				theme={{
+					components: {
+						Modal: {
+							colorBgElevated: 'white',
+							algorithm: true
+						}
+					}
+				}}
+			>
+				<Modal
+					title={data?.nameOfGadget}
+					centered
+					open={modal2Open}
+					onOk={() => setModal2Open(false)}
+					onCancel={() => setModal2Open(false)}
+					footer={false}
+				>
+					<img
+						className={scss.modal_img}
+						src={contentIsModal}
+						alt={data?.nameOfGadget}
+					/>
+				</Modal>
+			</ConfigProvider>
+		</>
+	);
+};
+
+export default CardProductPage;

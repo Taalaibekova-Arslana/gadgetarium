@@ -1,0 +1,54 @@
+.dropdown_select {
+	.selected_option {
+		margin-left: 6px;
+	}
+	.selected_option_icon {
+		display: flex;
+		align-items: center;
+		display: flex;
+		gap: 5px;
+		cursor: pointer;
+		transition: 1s;
+		span {
+			font-size: clamp(7px, 4vw, 16px);
+			font-weight: 400;
+			@media (max-width: 850px) {
+				font-size: clamp(7px, 4vw, 14px);
+			}
+			@media (max-width: 650px) {
+				font-size: clamp(7px, 4vw, 12px);
+			}
+			@media (max-width: 550px) {
+				font-size: clamp(7px, 4vw, 10px);
+			}
+			@media (max-width: 480px) {
+				font-size: clamp(5px, 4vw, 7px);
+			}
+		}
+	}
+	.dropdown {
+		display: flex;
+		flex-direction: column;
+		button {
+			background: transparent;
+			border: none;
+			display: flex;
+			justify-content: start;
+			cursor: pointer;
+			font-size: clamp(7px, 4vw, 16px);
+			font-weight: 400;
+			@media (max-width: 850px) {
+				font-size: clamp(7px, 4vw, 14px);
+			}
+			@media (max-width: 650px) {
+				font-size: clamp(7px, 4vw, 12px);
+			}
+			@media (max-width: 550px) {
+				font-size: clamp(7px, 4vw, 10px);
+			}
+			@media (max-width: 480px) {
+				font-size: clamp(5px, 4vw, 7px);
+			}
+		}
+	}
+}
